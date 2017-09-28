@@ -3,6 +3,9 @@ require "spec_helper"
 module ToyRobot
   class Location
     NORTH = :north
+    EAST  = :east
+    SOUTH = :south
+    WEST  = :west
 
     attr_reader :x
     attr_reader :y
@@ -22,7 +25,16 @@ module ToyRobot
     end
 
     def next
-      Location.new(x: x, y: y + 1, facing: facing)
+      case facing
+      when NORTH
+        Location.new(x: x, y: y + 1, facing: facing)
+      when EAST
+        Location.new(x: x + 1, y: y, facing: facing)
+      when SOUTH
+        Location.new(x: x, y: y - 1, facing: facing)
+      when WEST
+        Location.new(x: x - 1, y: y, facing: facing)
+      end
     end
 
     def ==(other_location)
@@ -76,6 +88,72 @@ module ToyRobot
                 before { 10.times { robot.move } }
 
                 it { is_expected.to eq(Location.new(y: 5)) }
+              end
+            end
+
+            context "facing EAST" do
+              let(:location) { Location.new(facing: Location::EAST) }
+
+              context "after being moved with #move once" do
+                before { robot.move }
+
+                it { is_expected.to eq(Location.new(x: 1, facing: Location::EAST)) }
+              end
+
+              context "after being moved with #move twice" do
+                before { 2.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(x: 2, facing: Location::EAST)) }
+              end
+
+              context "after being moved with #move 10 times" do
+                before { 10.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(x: 5, facing: Location::EAST)) }
+              end
+            end
+
+            context "facing SOUTH" do
+              let(:location) { Location.new(y: 5, facing: Location::SOUTH) }
+
+              context "after being moved with #move once" do
+                before { robot.move }
+
+                it { is_expected.to eq(Location.new(y: 4, facing: Location::SOUTH)) }
+              end
+
+              context "after being moved with #move twice" do
+                before { 2.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(y: 3, facing: Location::SOUTH)) }
+              end
+
+              context "after being moved with #move 10 times" do
+                before { 10.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(y: 0, facing: Location::SOUTH)) }
+              end
+            end
+
+            context "facing WEST" do
+              let(:location) { Location.new(x: 5, facing: Location::WEST) }
+
+              context "after being moved with #move once" do
+                before { robot.move }
+
+                it { is_expected.to eq(Location.new(x: 4, facing: Location::WEST)) }
+              end
+
+              context "after being moved with #move twice" do
+                before { 2.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(x: 3, facing: Location::WEST)) }
+              end
+
+              context "after being moved with #move 10 times" do
+                before { 10.times { robot.move } }
+
+                it { is_expected.to eq(Location.new(x: 0, facing: Location::WEST)) }
               end
             end
           end
