@@ -37,8 +37,18 @@ module ToyRobot
       end
     end
 
+    def rotate(degrees)
+      Location.new(x: x, y: y, facing: directions.rotate(directions.index(facing))[degrees / 90])
+    end
+
     def ==(other_location)
       x == other_location.x && y == other_location.y && facing == other_location.facing
+    end
+
+    private
+
+    def directions
+      [NORTH, EAST, SOUTH, WEST]
     end
   end
 
@@ -53,6 +63,14 @@ module ToyRobot
 
     def move
       place(location.next)
+    end
+
+    def left
+      place(location.rotate(-90))
+    end
+
+    def right
+      place(location.rotate(90))
     end
   end
 
@@ -89,6 +107,18 @@ module ToyRobot
 
                 it { is_expected.to eq(Location.new(y: 5)) }
               end
+
+              context "after being rotated left with #left" do
+                before { robot.left }
+
+                it { is_expected.to eq(Location.new(facing: Location::WEST)) }
+              end
+
+              context "after being rotated right with #right" do
+                before { robot.right }
+
+                it { is_expected.to eq(Location.new(facing: Location::EAST)) }
+              end
             end
 
             context "facing EAST" do
@@ -110,6 +140,18 @@ module ToyRobot
                 before { 10.times { robot.move } }
 
                 it { is_expected.to eq(Location.new(x: 5, facing: Location::EAST)) }
+              end
+
+              context "after being rotated left with #left" do
+                before { robot.left }
+
+                it { is_expected.to eq(Location.new(facing: Location::NORTH)) }
+              end
+
+              context "after being rotated right with #right" do
+                before { robot.right }
+
+                it { is_expected.to eq(Location.new(facing: Location::SOUTH)) }
               end
             end
 
@@ -133,6 +175,18 @@ module ToyRobot
 
                 it { is_expected.to eq(Location.new(y: 0, facing: Location::SOUTH)) }
               end
+
+              context "after being rotated left with #left" do
+                before { robot.left }
+
+                it { is_expected.to eq(Location.new(y: 5, facing: Location::EAST)) }
+              end
+
+              context "after being rotated right with #right" do
+                before { robot.right }
+
+                it { is_expected.to eq(Location.new(y: 5, facing: Location::WEST)) }
+              end
             end
 
             context "facing WEST" do
@@ -154,6 +208,18 @@ module ToyRobot
                 before { 10.times { robot.move } }
 
                 it { is_expected.to eq(Location.new(x: 0, facing: Location::WEST)) }
+              end
+
+              context "after being rotated left with #left" do
+                before { robot.left }
+
+                it { is_expected.to eq(Location.new(x: 5, facing: Location::SOUTH)) }
+              end
+
+              context "after being rotated right with #right" do
+                before { robot.right }
+
+                it { is_expected.to eq(Location.new(x: 5, facing: Location::NORTH)) }
               end
             end
           end
