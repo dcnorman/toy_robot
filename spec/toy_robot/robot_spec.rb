@@ -41,6 +41,10 @@ module ToyRobot
       Location.new(x: x, y: y, facing: directions.rotate(directions.index(facing))[degrees / 90])
     end
 
+    def to_s
+      [x, y, facing.to_s.upcase].join(",")
+    end
+
     def ==(other_location)
       x == other_location.x && y == other_location.y && facing == other_location.facing
     end
@@ -71,6 +75,10 @@ module ToyRobot
 
     def right
       place(location.rotate(90))
+    end
+
+    def report
+      location.to_s
     end
   end
 
@@ -228,6 +236,48 @@ module ToyRobot
             let(:location) { Location.new(x: 7) }
 
             it { is_expected.to be_nil }
+          end
+        end
+      end
+    end
+
+    describe "#report" do
+      subject { robot.report }
+
+      context "after being placed with #place" do
+        before { robot.place(location) }
+
+        context "given a location" do
+          context "within table bounds" do
+            context "facing NORTH" do
+              let(:location) { Location.new }
+
+              it { is_expected.to eq("0,0,NORTH") }
+            end
+
+            context "facing EAST" do
+              let(:location) { Location.new(x: 1, y: 1, facing: Location::EAST) }
+
+              it { is_expected.to eq("1,1,EAST") }
+            end
+
+            context "facing SOUTH" do
+              let(:location) { Location.new(x: 1, y: 3, facing: Location::SOUTH) }
+
+              it { is_expected.to eq("1,3,SOUTH") }
+            end
+
+            context "facing WEST" do
+              let(:location) { Location.new(x: 1, y: 5, facing: Location::WEST) }
+
+              it { is_expected.to eq("1,5,WEST") }
+            end
+          end
+
+          context "out of table bounds" do
+            let(:location) { Location.new(x: 7) }
+
+            it { is_expected.to be_empty }
           end
         end
       end
